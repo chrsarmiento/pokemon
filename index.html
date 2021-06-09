@@ -1,41 +1,85 @@
 <!DOCTYPE html>
 <html lang="es-CL">
-    <head>
-        <title>Pokemon</title>
+    <head>        
         <meta charset="UTF-8">
         <meta name="description" content="Sitio pokemonistico">
         <meta name="author" content="Christian">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pokemon</title>
 
         <!--link bootstrap-->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.css">
 
         <!--CSS propio-->
-
+        
         <!-- JS Jquery-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
         
         <script>
             $(document).ready(function(){
-                /* var i = 1;
-                while (i <= 151)
-                {
-                    i++;
-                    //i = i + 1;
-                } */
                 for(var i=1;i<=151;i++){                    
-                    var url = `<img src="http://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${i}.png">`
-                    var url2 = '<img src="http://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/' + i + '.png">';
-                    //console.log(url);
+                    var url = `<img id=${i} src="http://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${i}.png">`
                     $('#img-pokemon').append(url);
                 };
+            })
+
+            $(document).on('click','img',function(){
+                var id = $(this).attr('id');
+                console.log(id);
+                var url = `https://pokeapi.co/api/v2/pokemon/${id}/`;
+
+                function capitalizar(valor){
+                    var capitalizado = valor.substr(0,1).toUpperCase() + valor.substr(1,valor.length).toLowerCase();
+                    return capitalizado;
+                };
+
+                $.get(url, function(data){                    
+                    $('#nombre_pokemon').text(capitalizar(data.name));
+                    $('#pokemon-img').attr('src',data.sprites.front_default);
+                    
+                    var tipo = '<h5 class="card-title fw-bold">Type</h5><ul>'
+                    for(var i = 0; i < data.types.length; i++) {                        
+                        tipo = tipo + ('<li>'+ capitalizar(data.types[i].type.name) + '</li>');
+                    }
+                    tipo = tipo + ('<ul>');
+                    $('#type').html(tipo);
+
+                    var altura = `<h5 class="card-title fw-bold">Height</h5><p class="card-text">${data.height}</p>`; 
+                    $('#heigth').html(altura);
+
+                    var peso = `<h5 class="card-title fw-bold">Weight</h5><p class="card-text">${data.weight}</p>`; 
+                    $('#weigth').html(peso);
+
+                });
+                
             });
+
         </script>
     </head>
     <body>
         <div class="container">
             <h1 class="display-1">Listado Pokemon</h1>
-            <div id="img-pokemon"></div>            
+            <div class="row">
+                <div class="col-9">
+                    <div id="img-pokemon"></div>
+                </div>
+                <div class="col-3">
+                    <div class="card sticky-top">
+                        <div id='pokemon' class="card-header text-center">
+                            <h3 class="card-title">Cual es ese pokemon?</h3>
+                            <h4 class="card-title" id="nombre_pokemon"></h4>
+                        </div>
+                        <div class="card-body">
+                            <img id="pokemon-img" src="" alt="">
+                            <div id="type"></div>
+                            <div id="heigth"></div>
+                            <div id="weigth"></div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>                  
         </div>
+
         <!--JS bootstrap-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.js"></script>
     
